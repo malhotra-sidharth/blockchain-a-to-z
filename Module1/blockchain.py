@@ -41,4 +41,33 @@ class Blockchain:
                 newProof += 1
         return newProof
 
+    # Get the hash of the block
+    def hash(self, block):
+        encodedBlock = json.dumps(block, sort_keys=True).encode()
+        return hashlib.sha256(encodedBlock).hexdigest()
+
+    # Check the validity of the chain
+    def isChainValid(self, chain):
+        previousBlock = chain[0]        # first block of the chain
+        blockIndex = 1
+        while blockIndex < len(chain):
+            currentBlock = chain[blockIndex]
+
+            # Check previous hash
+            if currentBlock['previousHash'] != self.hash(previousBlock):
+                return False
+
+            # Validate Proof
+            previousProof = previousBlock['proof']
+            currentBlockProof = currentBlock['proof']
+            hashOperation = hashlib.sha256(str(currentBlockProof**2 - previousProof**2).encode()).hexdigest()
+            if hashOperation[:4] != '0000':
+                return False
+
+            previousBlock = currentBlock
+            blockIndex =+ 1
+
+        return True
+
+
 # Part 2 - Mining our Blockchain
