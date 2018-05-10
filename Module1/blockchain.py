@@ -71,3 +71,33 @@ class Blockchain:
 
 
 # Part 2 - Mining our Blockchain
+
+# Creating a WebApp
+app = Flask(__name__)
+
+# Creating a Blockchain
+blockchain = Blockchain()
+
+# Mining a new block
+@app.route('/mine-block', methods=['GET'])
+def mineBlock():
+    previousBlock = blockchain.getPreviousBlock()
+    previousProof = previousBlock['proof']
+    newProof = blockchain.proofOfWork(previousProof)
+    previousHash = blockchain.hash(previousBlock)
+    newBlock = blockchain.createBlock(newProof, previousHash)
+    response = {'message': 'Congratulations, you just mined a block!',
+                'block': newBlock}
+    return jsonify(response), 200
+
+# Getting the full Blockchain
+@app.route('/get-chain', methods=['GET'])
+def getChain():
+    response = {'chain': blockchain.chain,
+                'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+# Running the app
+app.run(host='0.0.0.0', port=5000)
+
+
