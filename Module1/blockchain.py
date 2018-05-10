@@ -7,9 +7,7 @@ import json
 from flask import Flask, jsonify
 
 # Part 1 - Building a Blockchain
-
 class Blockchain:
-
     # Initialize Blockchain
     def __init__(self):
         self.chain = [] # list containing different blocks
@@ -21,5 +19,26 @@ class Blockchain:
                  'timestamp': str(datetime.datetime.now()),
                  'proof': proof,
                  'previousHash': previousHash}
+        self.chain.append(block)
+        return block
+
+    # Get previous block
+    def getPreviousBlock(self):
+        return self.chain[-1]
+
+    # Proof of work
+    def proofOfWork(self, previousProof):
+        newProof = 1        # we will increment this variable by 1 for each iteration
+        checkProof = False
+        while checkProof is False:
+            ## Should be non symmetrical i.e newProof + previousProof is symmetrical
+            hashOperation = hashlib.sha256(str(newProof**2 - previousProof**2).encode()).hexdigest()
+
+            ## check first 4 characters
+            if hashOperation[:4] == '0000':
+                checkProof = True
+            else:
+                newProof += 1
+        return newProof
 
 # Part 2 - Mining our Blockchain
