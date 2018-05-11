@@ -64,8 +64,9 @@ class Blockchain:
             if hashOperation[:4] != '0000':
                 return False
 
+            blockIndex += 1
             previousBlock = currentBlock
-            blockIndex =+ 1
+
 
         return True
 
@@ -95,6 +96,11 @@ def mineBlock():
 def getChain():
     response = {'chain': blockchain.chain,
                 'length': len(blockchain.chain)}
+    return jsonify(response), 200
+
+@app.route('/is-valid', methods=['GET'])
+def isValid():
+    response = {'isValid': blockchain.isChainValid(blockchain.chain)}
     return jsonify(response), 200
 
 # Running the app
