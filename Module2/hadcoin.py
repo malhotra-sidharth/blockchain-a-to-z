@@ -1,24 +1,31 @@
-# Module 1 - Create a Blockchain
+# Module 2 - Create a Cryptocurrency
 
 # Importing the libraries
 import datetime
 import hashlib
 import json
-from flask import Flask, jsonify
+from flask import Flask, jsonify, request
+import requests
+from uuid import uuid4
+from urllib.parse import urlparse
 
 # Part 1 - Building a Blockchain
 class Blockchain:
     # Initialize Blockchain
     def __init__(self):
         self.chain = [] # list containing different blocks
+        self.transactions = [] # list of transactions
         self.createBlock(proof = 1, previousHash = '0') # Create a genesis block
+        self.nodes = set() # set of nodes in the network
 
     # Create a block in the blockchain
     def createBlock(self, proof, previousHash):
         block = {'index': len(self.chain) + 1,
                  'timestamp': str(datetime.datetime.now()),
                  'proof': proof,
+                 'transactions': self.transactions,
                  'previousHash': previousHash}
+        self.transactions = []
         self.chain.append(block)
         return block
 
@@ -67,8 +74,23 @@ class Blockchain:
             blockIndex += 1
             previousBlock = currentBlock
 
-
         return True
+
+    # Adds a transaction to the list
+    def addTransaction(self, sender, receiver, amount):
+        transaction = {
+            'sender': sender,
+            'receiver': receiver,
+            'amount': amount
+        }
+        self.transactions.append(transaction)
+        previousBlock = self.getPreviousBlock()
+        return previousBlock['index'] + 1
+
+    # Adds a new node to the network
+    def addNode(self, address):
+        parsedUrl = urlparse(address)
+        self.nodes.add(parsedUrl.netlock)
 
 
 # Part 2 - Mining our Blockchain
@@ -105,5 +127,9 @@ def isValid():
 
 # Running the app
 app.run(host='0.0.0.0', port=5000)
+
+
+# Part 3 - Decentralizing our Blockchain
+
 
 
