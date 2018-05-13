@@ -92,6 +92,26 @@ class Blockchain:
         parsedUrl = urlparse(address)
         self.nodes.add(parsedUrl.netlock)
 
+    # Finds the longest chain in network
+    # and updates all the chains to longest chain
+    def replaceChain(self):
+        network = self.nodes
+        longestChain = None
+        maxLength = len(self.chain) # Length of current chain
+        for node in network: # loop through all nodes in network
+            response = requests.get(f'http://{node}/get-chain')
+            if response.status_code == 200:
+                length = response.json()['length']
+                chain = response.json()['chain']
+                if length > maxLength and self.isChainValid(chain):
+                    maxLength = length
+                    longestChain = chain
+
+        if longestChain:    # if longestChain was updated
+            self.chain = longestChain
+            return True
+        return False
+
 
 # Part 2 - Mining our Blockchain
 
