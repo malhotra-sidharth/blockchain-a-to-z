@@ -25,7 +25,7 @@ class Blockchain:
                  'proof': proof,
                  'transactions': self.transactions,
                  'previousHash': previousHash}
-        self.transactions = []
+        self.transactions = []  # Empty transactions after adding to the block
         self.chain.append(block)
         return block
 
